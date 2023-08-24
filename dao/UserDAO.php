@@ -1,70 +1,100 @@
 <?php
-    require_once('models/User.php');
+require_once('models/User.php');
 
-    class UserDAO implements UserDaoInterface {
-        private $conn;
-        private $url;
+class UserDAO implements UserDaoInterface
+{
+    private $conn;
+    private $url;
 
-        public function __construct(PDO $conn, $url){
-            $this->conn = $conn;
-            $this->url = $url;
-        }
-        public function buildUser($data){
-            $user = new User();
+    public function __construct(PDO $conn, $url)
+    {
+        $this->conn = $conn;
+        $this->url = $url;
+    }
 
-            $user->id = $data["id"];
-            $user->name = $data["name"];
-            $user->lastname = $data["lastname"];
-            $user->email = $data["email"];
-            $user->password = $data["password"];
-            $user->image = $data["image"];
-            $user->bio = $data["bio"];
-            $user->token = $data["token"];
+    public function buildUser($data)
+    {
+        $user = new User();
 
-            return $user;
-        }
-        public function create(User $user, $authUser = false){
+        $user->id = $data["id"];
+        $user->name = $data["name"];
+        $user->lastname = $data["lastname"];
+        $user->email = $data["email"];
+        $user->password = $data["password"];
+        $user->image = $data["image"];
+        $user->bio = $data["bio"];
+        $user->token = $data["token"];
 
-        }
-        public function update(User $user){
+        return $user;
+    }
 
-        }
-        public function verifyToken($protected = false){
+    public function create(User $user, $authUser = false)
+    {
+        $stmt = $this->conn->prepare("INSERT INTO users(name, lastname, email, password, token) VALUES (:name, :lastname, :email, :password, :token)");
 
-        }
-        public function setTokenToSession($tpken, $redirect = true){
+        $stmt->bindParam(":name", $user->name);
+        $stmt->bindParam(":lastname", $user->lastname);
+        $stmt->bindParam(":email", $user->email);
+        $stmt->bindParam(":password", $user->password);
+        $stmt->bindParam(":token", $user->token);
 
-        }
-        public function authenticateUser($email, $password){
+        $stmt->execute();
+    }
 
-        }
-        public function findByEmail($email){
-            if ($email != ""){
-                $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = :email");
+    public function update(User $user)
+    {
 
-                $stmt->bindParam(":email", $email);
+    }
 
-                $stmt->execute();
+    public function verifyToken($protected = false)
+    {
 
-                if ($stmt->rowCount() > 0){
-                    $stmt->fetch();
-                    $user = $this->buildUser($data);
+    }
 
-                    return $user;
-                }else{
-                    return false;
-                }
-            }else{
+    public function setTokenToSession($tpken, $redirect = true)
+    {
+
+    }
+
+    public function authenticateUser($email, $password)
+    {
+
+    }
+
+    public function findByEmail($email)
+    {
+        if ($email != "") {
+            $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = :email");
+
+            $stmt->bindParam(":email", $email);
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $stmt->fetch();
+                $user = $this->buildUser($data);
+
+                return $user;
+            } else {
                 return false;
             }
-        }
-        public function findById($id){
-
-        }
-        public function findByToken($token){
-
-        }
-        public function changePassword(User $user){
-
+        } else {
+            return false;
         }
     }
+
+    public function findById($id)
+    {
+
+    }
+
+    public function findByToken($token)
+    {
+
+    }
+
+    public function changePassword(User $user)
+    {
+
+    }
+}
