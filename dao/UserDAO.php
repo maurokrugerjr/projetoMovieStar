@@ -30,7 +30,7 @@ class UserDAO implements UserDaoInterface
 
     public function create(User $user, $authUser = false)
     {
-        $stmt = $this->conn->prepare("INSERT INTO users(name, lastname, email, password, token) VALUES (:name, :lastname, :email, :password, :token)");
+        $stmt = $this->conn->prepare("INSERT INTO users (name, lastname, email, password, token) VALUES (:name, :lastname, :email, :password, :token)");
 
         $stmt->bindParam(":name", $user->name);
         $stmt->bindParam(":lastname", $user->lastname);
@@ -70,8 +70,9 @@ class UserDAO implements UserDaoInterface
 
             $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                $stmt->fetch();
+            if($stmt->rowCount() > 0) {
+
+                $data = $stmt->fetch();
                 $user = $this->buildUser($data);
 
                 return $user;
