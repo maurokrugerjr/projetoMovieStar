@@ -1,15 +1,18 @@
 <?php
 require_once('models/User.php');
+include_once("models/Message.php");
 
 class UserDAO implements UserDaoInterface
 {
     private $conn;
     private $url;
+    private $message;
 
     public function __construct(PDO $conn, $url)
     {
         $this->conn = $conn;
         $this->url = $url;
+        $this->message = new Message($url);
     }
 
     public function buildUser($data)
@@ -39,6 +42,13 @@ class UserDAO implements UserDaoInterface
         $stmt->bindParam(":token", $user->token);
 
         $stmt->execute();
+
+        // Autentica usuário caso venha da tela de registro
+        if($authUser) {
+
+            $this->setTokenToSession($user->token);
+
+        }
     }
 
     public function update(User $user)
